@@ -1,0 +1,32 @@
+/* src/components/NavBar/NavBar.module.css */
+.navContainer {
+  display: flex;
+  flex-direction: column; /* 垂直排列：标题第一行，链接第二行 */
+  align-items: center; /* 水平居中 */
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #eee;
+  width: 100%; /* 显式声明占满全屏宽度 */
+  box-sizing: border-box; /* 极其重要！确保 padding 不会把宽度撑爆出滚动条 */
+}
+
+.title {
+  margin: 0 0 10px 0; /* 给标题留点底边距 */
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.linkGroup {
+  display: flex;
+  gap: 15px; /* 链接之间的间距 */
+  align-items: center;
+}
+
+.linkGroup a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.linkGroup a:hover {
+  text-decoration: underline;
+}

@@ -5,6 +5,8 @@ import {
   Link,
   useParams,
 } from "react-router-dom";
+import NavBar from "./components/NavBar/NavBar";
+import "./App.css";
 
 // 1. 简单的组件内容（你可以想象成三个不同的网页）
 const Gallery = () => (
@@ -34,24 +36,21 @@ const BreedDetail = () => {
 
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      {/* 导航栏：方便你在页面上点，不用手动改网址 */}
-      <nav>
-        <Link to="/gallery">相册</Link> | <Link to="/breeds">品种</Link> |{" "}
-        <Link to="/breeds/shiba">品种详情</Link>
-      </nav>
+    <div className="app-container">
+      <header className="site-header">
+        <NavBar />
+      </header>
 
-      <hr />
+      <main className="main-content">
+        <Routes>
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/breeds" element={<Breeds />} />
+          <Route path="/breeds/:breed_id" element={<BreedDetail />} />
 
-      {/* 路由匹配核心区域 */}
-      <Routes>
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/breeds" element={<Breeds />} />
-        <Route path="/breeds/:breed_id" element={<BreedDetail />} />
-
-        {/* 默认首页 */}
-        <Route path="/" element={<h2>👋 欢迎来到主页</h2>} />
-      </Routes>
+          {/* 默认首页 */}
+          <Route path="/" element={<h2>👋 欢迎来到主页</h2>} />
+        </Routes>
+      </main>
     </div>
   );
 }
