@@ -1,0 +1,70 @@
+/* src/pages/Gallery.module.css */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* 悬停小动画 */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.catImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover; /* 裁剪图片以填满容器，不变形 */
+  object-position: top;
+}
+
+.info {
+  padding: 12px;
+}
+
+.info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.info p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.loadMoreBtn {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loadMoreBtn:hover {
+  background-color: #ee5253;
+  transform: scale(1.05); /* 按钮也来个微小的放大效果 */
+}
+
+.loadMoreBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

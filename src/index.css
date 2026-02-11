@@ -1,0 +1,6 @@
+/* 选中页面上所有的元素，包括它们的伪元素 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
