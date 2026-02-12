@@ -1,26 +1,9 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Routes, Route, Link, useParams } from "react-router-dom";
 import NavBar from "./components/NavBar/NavBar";
 import "./App.css";
 import Gallery from "./pages/Gallery/Gallery";
 import Breeds from "./pages/Breeds/Breeds";
-
-const BreedDetail = () => {
-  const { breed_id } = useParams();
-  return (
-    <div>
-      <h2>🔍 品种详情</h2>
-      <p>
-        你正在查看的是：<strong>{breed_id}</strong>
-      </p>
-    </div>
-  );
-};
+import BreedDetail from "./pages/BreedDetail/BreedDetail";
 
 function App() {
   return (

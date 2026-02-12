@@ -11,8 +11,6 @@ const NavBar = () => {
         <Link to="/gallery">相册</Link>
         <span>|</span>
         <Link to="/breeds">品种</Link>
-        <span>|</span>
-        <Link to="/breeds/shiba">品种详情</Link>
       </div>
     </nav>
   );

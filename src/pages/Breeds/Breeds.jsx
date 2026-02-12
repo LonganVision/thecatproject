@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./Breeds.module.css";
+import { Link } from "react-router-dom";
 
 const Breeds = () => {
   const [breeds, setBreeds] = useState([]);
@@ -36,6 +37,7 @@ const Breeds = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchBreeds(0);
   }, []);
@@ -49,19 +51,21 @@ const Breeds = () => {
     <div className={styles.container}>
       <div className={styles.grid}>
         {breeds.map((breed) => (
-          <div
-            key={breed.id}
-            className={styles.card}
-            style={{
-              backgroundImage: `url(${breed.image?.url || "https://via.placeholder.com/300"})`,
-            }}
-          >
-            <div className={styles.overlay}>
-              <div className={styles.info}>
-                <h3>{breed?.name ?? "神秘品种"}</h3>
+          <Link to={`/breeds/${breed.id}`} className={styles.cardLink}>
+            <div
+              key={breed.id}
+              className={styles.card}
+              style={{
+                backgroundImage: `url(${breed.image?.url || "https://via.placeholder.com/300"})`,
+              }}
+            >
+              <div className={styles.overlay}>
+                <div className={styles.info}>
+                  <h3>{breed?.name ?? "神秘品种"}</h3>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       <div className={styles.buttonWrapper}>
