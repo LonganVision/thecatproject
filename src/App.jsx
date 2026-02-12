@@ -8,20 +8,7 @@ import {
 import NavBar from "./components/NavBar/NavBar";
 import "./App.css";
 import Gallery from "./pages/Gallery/Gallery";
-
-/* 1. 简单的组件内容（你可以想象成三个不同的网页）
-const Gallery = () => (
-  <div>
-    <h2>📷 图片库页面</h2>
-    <p>这里展示所有狗狗的照片。</p>
-  </div>
-);*/
-const Breeds = () => (
-  <div>
-    <h2>🐶 品种列表页</h2>
-    <p>点击查看不同品种的详细信息。</p>
-  </div>
-);
+import Breeds from "./pages/Breeds/Breeds";
 
 const BreedDetail = () => {
   const { breed_id } = useParams();
