@@ -19,7 +19,7 @@ function App() {
           <Route path="/breeds/:breed_id" element={<BreedDetail />} />
 
           {/* 默认首页 */}
-          <Route path="/" element={<h2>👋 欢迎来到主页</h2>} />
+          <Route path="/" element={<Gallery />} />
         </Routes>
       </main>
     </div>
