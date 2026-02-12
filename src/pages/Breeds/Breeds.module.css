@@ -70,16 +70,14 @@
 
 /* “加载更多”按钮 */
 .loadMoreBtn {
-  background-color: #ff8c42; /* 暖橘色，像小猫一样 */
+  background-color: #ff6b6b;
   color: white;
   border: none;
   padding: 12px 30px;
-  font-size: 1rem;
   border-radius: 25px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(255, 140, 66, 0.3);
 }
 
 .loadMoreBtn:hover:not(:disabled) {

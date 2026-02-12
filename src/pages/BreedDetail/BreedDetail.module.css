@@ -17,6 +17,7 @@
   width: 45%;
   border-radius: 15px;
   object-fit: cover;
+  object-position: top;
   max-height: 500px;
 }
 
@@ -48,4 +49,19 @@
   .mainImage {
     width: 100%;
   }
+}
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+.backBtn {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }

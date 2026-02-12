@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./Gallery.module.css";
-
+import { Link } from "react-router-dom";
 const Gallery = () => {
   //useState = 储存数据的存钱罐
   //盒子里的猫
@@ -52,7 +52,19 @@ const Gallery = () => {
             <img src={cat.url} alt="cat" className={styles.catImage} />
             {/* 展示元数据：注意 API 返回的是 breeds 数组 */}
             <div className={styles.info}>
-              <h3>品种：{cat.breeds?.[0]?.name || "神秘品种"}</h3>
+              <h3>
+                品种：
+                {cat.breeds?.[0] ? (
+                  <Link
+                    to={`/breeds/${cat.breeds[0].id}`}
+                    className={styles.breedLink}
+                  >
+                    {cat.breeds[0].name}
+                  </Link>
+                ) : (
+                  "神秘品种"
+                )}
+              </h3>
               <p>起源: {cat.breeds?.[0]?.origin || "未知"}</p>
             </div>
           </div>

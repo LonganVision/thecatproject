@@ -51,7 +51,11 @@ const Breeds = () => {
     <div className={styles.container}>
       <div className={styles.grid}>
         {breeds.map((breed) => (
-          <Link to={`/breeds/${breed.id}`} className={styles.cardLink}>
+          <Link
+            key={breed.id}
+            to={`/breeds/${breed.id}`}
+            className={styles.cardLink}
+          >
             <div
               key={breed.id}
               className={styles.card}

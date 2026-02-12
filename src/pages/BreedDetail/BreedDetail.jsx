@@ -11,8 +11,8 @@ const BreedDetail = () => {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        // 使用 images/search 接口并指定 breed_id
-        const response = await fetch(
+        // 1. 先获取品种文字信息
+        const breedRes = await fetch(
           `https://api.thecatapi.com/v1/breeds/${breed_id}`,
           {
             headers: {
@@ -21,16 +21,28 @@ const BreedDetail = () => {
             },
           },
         );
-        const data = await response.json();
-        //console.log("当前请求的 ID:", breed_id);
-        // data[0] 包含了该品种的详细信息和一张精美图片
-        //console.log("准备把图片地址从", breedData?.url, "改为", data[0].url);
-        const fixedData = {
-          url: `https://cdn2.thecatapi.com/images/${data.reference_image_id}.jpg`,
-          breeds: [data],
-        };
+        const breedDataJson = await breedRes.json();
 
-        setBreedData(fixedData);
+        // 2. 关键步骤：用 reference_image_id 获取包含正确 URL 的图片对象
+        let imageUrl = "";
+        if (breedDataJson.reference_image_id) {
+          const imgRes = await fetch(
+            `https://api.thecatapi.com/v1/images/${breedDataJson.reference_image_id}`,
+            {
+              headers: {
+                "x-api-key":
+                  "live_X1HjjKAGhv7qfqTiZi79O40eAgqh2KwlZSdXpeSONasYtBU9wzSDAF342o0vkZK4",
+              },
+            },
+          );
+          const imgData = await imgRes.json();
+          imageUrl = imgData.url; // 这里拿到的 URL 是带正确后缀（jpg/png/gif）的！
+        }
+
+        setBreedData({
+          url: imageUrl,
+          breeds: [breedDataJson],
+        });
       } catch (error) {
         console.error("加载失败:", error);
       } finally {
@@ -46,10 +58,6 @@ const BreedDetail = () => {
 
   return (
     <div className={styles.container}>
-      <button onClick={() => navigate(-1)} className={styles.backBtn}>
-        返回列表
-      </button>
-
       <div className={styles.content}>
         <img src={breedData.url} alt={info.name} className={styles.mainImage} />
 
@@ -70,6 +78,11 @@ const BreedDetail = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className={styles.buttonWrapper}>
+        <button onClick={() => navigate(-1)} className={styles.backBtn}>
+          返回列表
+        </button>
       </div>
     </div>
   );
