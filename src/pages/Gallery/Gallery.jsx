@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./Gallery.module.css";
-import { Link } from "react-router-dom";
+import { catApi } from "../../api/catApi";
+import CatCard from "../../components/CatCard/CatCard";
+
 const Gallery = () => {
   //useState = 储存数据的存钱罐
   //盒子里的猫
@@ -11,18 +13,9 @@ const Gallery = () => {
   const [page, setPage] = useState(0);
 
   const fetchCats = async (currentPage) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(
-        "https://api.thecatapi.com/v1/images/search?limit=12&has_breeds=1",
-        {
-          headers: {
-            "x-api-key":
-              "live_X1HjjKAGhv7qfqTiZi79O40eAgqh2KwlZSdXpeSONasYtBU9wzSDAF342o0vkZK4",
-          },
-        },
-      );
-      const data = await response.json();
+      const data = await catApi.fetchCats(12, currentPage);
       setCats((prevCats) =>
         currentPage === 0 ? data : [...prevCats, ...data],
       );
@@ -48,26 +41,7 @@ const Gallery = () => {
     <>
       <div className={styles.grid}>
         {cats.map((cat) => (
-          <div key={cat.id} className={styles.card}>
-            <img src={cat.url} alt="cat" className={styles.catImage} />
-            {/* 展示元数据：注意 API 返回的是 breeds 数组 */}
-            <div className={styles.info}>
-              <h3>
-                品种：
-                {cat.breeds?.[0] ? (
-                  <Link
-                    to={`/breeds/${cat.breeds[0].id}`}
-                    className={styles.breedLink}
-                  >
-                    {cat.breeds[0].name}
-                  </Link>
-                ) : (
-                  "神秘品种"
-                )}
-              </h3>
-              <p>起源: {cat.breeds?.[0]?.origin || "未知"}</p>
-            </div>
-          </div>
+          <CatCard key={cat.id} cat={cat} />
         ))}
       </div>
       <div className={styles.buttonWrapper}>

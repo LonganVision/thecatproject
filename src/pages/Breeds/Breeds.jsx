@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./Breeds.module.css";
 import { Link } from "react-router-dom";
+import { catApi } from "../../api/catApi";
+import BreedCard from "../../components/BreedCard/BreedCard";
 
 const Breeds = () => {
   const [breeds, setBreeds] = useState([]);
@@ -10,16 +12,7 @@ const Breeds = () => {
   const fetchBreeds = async (currentPage) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://api.thecatapi.com/v1/breeds?limit=12&page=${currentPage}`,
-        {
-          headers: {
-            "x-api-key":
-              "live_X1HjjKAGhv7qfqTiZi79O40eAgqh2KwlZSdXpeSONasYtBU9wzSDAF342o0vkZK4",
-          },
-        },
-      );
-      const data = await response.json();
+      const data = await catApi.fetchBreeds(12, currentPage);
       setBreeds((prevBreeds) => {
         if (currentPage === 0) return data;
         // 2. 如果是加载更多，进行去重合并
@@ -51,25 +44,7 @@ const Breeds = () => {
     <div className={styles.container}>
       <div className={styles.grid}>
         {breeds.map((breed) => (
-          <Link
-            key={breed.id}
-            to={`/breeds/${breed.id}`}
-            className={styles.cardLink}
-          >
-            <div
-              key={breed.id}
-              className={styles.card}
-              style={{
-                backgroundImage: `url(${breed.image?.url || "https://via.placeholder.com/300"})`,
-              }}
-            >
-              <div className={styles.overlay}>
-                <div className={styles.info}>
-                  <h3>{breed?.name ?? "神秘品种"}</h3>
-                </div>
-              </div>
-            </div>
-          </Link>
+          <BreedCard key={breed.id} breed={breed} />
         ))}
       </div>
       <div className={styles.buttonWrapper}>

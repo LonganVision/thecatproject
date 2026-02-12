@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./BreedDetail.module.css";
+import { catApi } from "../../api/catApi";
 
 const BreedDetail = () => {
   const { breed_id } = useParams(); // 获取 URL 中的 id
@@ -12,31 +13,17 @@ const BreedDetail = () => {
     const fetchDetail = async () => {
       try {
         // 1. 先获取品种文字信息
-        const breedRes = await fetch(
-          `https://api.thecatapi.com/v1/breeds/${breed_id}`,
-          {
-            headers: {
-              "x-api-key":
-                "live_X1HjjKAGhv7qfqTiZi79O40eAgqh2KwlZSdXpeSONasYtBU9wzSDAF342o0vkZK4",
-            },
-          },
-        );
-        const breedDataJson = await breedRes.json();
+        const breedDataJson = await catApi.fetchBreedDetail(breed_id);
+        console.log(breedDataJson);
 
-        // 2. 关键步骤：用 reference_image_id 获取包含正确 URL 的图片对象
-        let imageUrl = "";
+        // 2. 用 reference_image_id 获取包含正确 URL 的图片对象
+        let imageUrl = null;
         if (breedDataJson.reference_image_id) {
-          const imgRes = await fetch(
-            `https://api.thecatapi.com/v1/images/${breedDataJson.reference_image_id}`,
-            {
-              headers: {
-                "x-api-key":
-                  "live_X1HjjKAGhv7qfqTiZi79O40eAgqh2KwlZSdXpeSONasYtBU9wzSDAF342o0vkZK4",
-              },
-            },
+          const imgData = await catApi.fetchImagesByBreed(
+            breedDataJson.reference_image_id,
           );
-          const imgData = await imgRes.json();
-          imageUrl = imgData.url; // 这里拿到的 URL 是带正确后缀（jpg/png/gif）的！
+          imageUrl = imgData.url;
+          console.log(imageUrl);
         }
 
         setBreedData({
@@ -59,7 +46,18 @@ const BreedDetail = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <img src={breedData.url} alt={info.name} className={styles.mainImage} />
+        {breedData.url ? (
+          <img
+            src={breedData.url}
+            alt={info.name}
+            className={styles.mainImage}
+          />
+        ) : (
+          <div className={styles.noPhotoBox}>
+            <span className={styles.catIcon}>🐱</span>
+            <p>官方暂未提供证件照</p>
+          </div>
+        )}
 
         <div className={styles.textSection}>
           <h1>{info.name}</h1>
