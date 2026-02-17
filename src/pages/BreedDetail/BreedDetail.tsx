@@ -1,35 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./BreedDetail.module.css";
-import { catApi } from "../../api/catApi";
+import { catApi, Breed } from "../../api/catApi";
 
 const BreedDetail = () => {
-  const { breed_id } = useParams(); // 获取 URL 中的 id
+  const { breed_id } = useParams() as { breed_id: string }; // 获取 URL 中的 id
   const navigate = useNavigate();
-  const [breedData, setBreedData] = useState();
+  const [breedData, setBreedData] = useState<Breed | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        // 1. 先获取品种文字信息
         const breedDataJson = await catApi.fetchBreedDetail(breed_id);
-        console.log(breedDataJson);
-
-        // 2. 用 reference_image_id 获取包含正确 URL 的图片对象
-        let imageUrl = null;
+        //console.log(breedDataJson);
+        setBreedData(breedDataJson);
         if (breedDataJson.reference_image_id) {
-          const imgData = await catApi.fetchImagesByBreed(
+          const imageRes = await catApi.fetchImagesByBreed(
             breedDataJson.reference_image_id,
           );
-          imageUrl = imgData.url;
-          console.log(imageUrl);
+          setImageUrl(imageRes.url); // 存下真正的图片地址
         }
-
-        setBreedData({
-          url: imageUrl,
-          breeds: [breedDataJson],
-        });
       } catch (error) {
         console.error("加载失败:", error);
       } finally {
@@ -41,23 +33,12 @@ const BreedDetail = () => {
 
   if (loading) return <div className={styles.loader}>正在加载详细资料...</div>;
   if (!breedData) return <div>找不到该品种信息</div>;
-  const info = breedData.breeds[0]; // 提取品种详细数据
+  const info = breedData; // 提取品种详细数据
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        {breedData.url ? (
-          <img
-            src={breedData.url}
-            alt={info.name}
-            className={styles.mainImage}
-          />
-        ) : (
-          <div className={styles.noPhotoBox}>
-            <span className={styles.catIcon}>🐱</span>
-            <p>官方暂未提供证件照</p>
-          </div>
-        )}
+        <img src={imageUrl} alt={info.name} className={styles.mainImage} />
 
         <div className={styles.textSection}>
           <h1>{info.name}</h1>
