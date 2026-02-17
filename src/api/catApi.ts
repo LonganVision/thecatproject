@@ -5,11 +5,14 @@ const API_KEY =
 /**
  * 封装一个通用的请求函数，减少重复代码
  */
-async function request(endpoint, options = {}) {
+async function request<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
 
   // 设置默认 Header
-  const headers = {
+  const headers: HeadersInit = {
     "Content-Type": "application/json",
     "x-api-key": API_KEY,
     ...options.headers,
@@ -23,7 +26,28 @@ async function request(endpoint, options = {}) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return await response.json();
+  return (await response.json()) as T;
+}
+
+export interface Cat {
+  breeds: Breed[];
+  id: string;
+  url: string;
+}
+
+export interface Breed {
+  id: string;
+  name: string;
+  temperament: string;
+  origin: string;
+  description: string;
+  life_span: string;
+  adaptability: number; //JS internal all 64 bit float
+  reference_image_id: string;
+}
+
+export interface BreedWithImage extends Breed {
+  image_url?: string;
 }
 
 /**
@@ -32,25 +56,25 @@ async function request(endpoint, options = {}) {
 export const catApi = {
   // 获取猫咪图片列表
   //https://api.thecatapi.com/v1/images/search?limit=12&has_breeds=1
-  fetchCats: async (limit = 12) => {
-    return await request(`/images/search?limit=${limit}&has_breeds=1`);
+  fetchCats: (limit = 12, currentPage = 0) => {
+    return request<Cat[]>(`/images/search?limit=${limit}&has_breeds=1`);
   },
 
   // 获取所有品种列表
   //https://api.thecatapi.com/v1/breeds?limit=12&page=${currentPage}
-  fetchBreeds: async (limit = 12, currentPage = 0) => {
-    return await request(`/breeds?limit=${limit}&page=${currentPage}`);
+  fetchBreeds: (limit = 12, currentPage = 0) => {
+    return request<Breed[]>(`/breeds?limit=${limit}&page=${currentPage}`);
   },
 
   // 获取某个品种的具体信息
   //`https://api.thecatapi.com/v1/breeds/${breed_id}`
-  fetchBreedDetail: async (breedId) => {
-    return await request(`/breeds/${breedId}`);
+  fetchBreedDetail: (breedId: string) => {
+    return request<Breed>(`/breeds/${breedId}`);
   },
 
   // 搜索特定品种的图片
   //`https://api.thecatapi.com/v1/images/${breedDataJson.reference_image_id}`
-  fetchImagesByBreed: async (breedImageId) => {
-    return await request(`/images/${breedImageId}`);
+  fetchImagesByBreed: (breedImageId: string) => {
+    return request<Cat>(`/images/${breedImageId}`);
   },
 };

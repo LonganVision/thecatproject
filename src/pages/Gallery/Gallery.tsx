@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import styles from "./Gallery.module.css";
-import { catApi } from "../../api/catApi";
+import { catApi, Cat } from "../../api/catApi";
 import CatCard from "../../components/CatCard/CatCard";
 
 const Gallery = () => {
   //useState = 储存数据的存钱罐
   //盒子里的猫
-  const [cats, setCats] = useState([]);
+  const [cats, setCats] = useState<Cat[]>([]);
   //加载状态
   const [loading, setLoading] = useState(true);
   //页码
   const [page, setPage] = useState(0);
 
-  const fetchCats = async (currentPage) => {
+  const fetchCats = async (currentPage: number) => {
     setLoading(true);
     try {
       const data = await catApi.fetchCats(12, currentPage);
-      setCats((prevCats) =>
+      setCats((prevCats: Cat[]) =>
         currentPage === 0 ? data : [...prevCats, ...data],
       );
     } catch (error) {
