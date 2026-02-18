@@ -1,10 +1,9 @@
-// src/components/BreedListContainer.tsx
 "use client";
 
 import { useState } from "react";
 import { catApi } from "@/api/catApi";
 import BreedCard from "../BreedCard/BreedCard";
-import styles from "./BreedListContainer.module.css";
+import { SimpleGrid, Button, Center, Container } from "@mantine/core";
 
 export default function BreedListContainer({
   children,
@@ -21,7 +20,6 @@ export default function BreedListContainer({
     setLoading(true);
     const nextPage = page + 1;
     try {
-      // 客户端加载更多时，依然需要跑这一套逻辑（或者你可以封装到 catApi 里）
       const data = await catApi.fetchBreeds(12, nextPage);
       const enriched = await Promise.all(
         data.map(async (breed: any) => {
@@ -42,23 +40,45 @@ export default function BreedListContainer({
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.grid}>
-        {/* 样式建议写在 module css 里 */}
-        {children} {/* 服务器送来的首屏 12 个带图卡片 */}
+    // 1. 使用 Container 替代 .container
+    <Container size="lg" py="xl">
+      {/* 2. 使用 SimpleGrid 替代 .grid，完美适配 250px 左右的卡片宽度 */}
+      <SimpleGrid
+        cols={{ base: 1, xs: 2, sm: 3, md: 4 }}
+        spacing="lg"
+        verticalSpacing="xl"
+      >
+        {children}
         {extraBreeds.map((breed) => (
           <BreedCard key={breed.id} breed={breed} />
         ))}
-      </div>
-      <div className={styles.buttonWrapper}>
-        <button
+      </SimpleGrid>
+
+      {/* 3. 使用 Center 和 Button 替代 .buttonWrapper 和 .loadMoreBtn */}
+      <Center mt={50}>
+        <Button
           onClick={handleLoadMore}
-          disabled={loading}
-          className={styles.loadMoreBtn}
+          loading={loading}
+          loaderProps={{ type: "dots" }}
+          color="pink.5"
+          size="lg"
+          radius="xl"
+          variant="filled"
+          style={{
+            transition: "all 0.2s ease",
+          }}
+          // 给按钮也加上你喜欢的 hover 放大效果
+          styles={{
+            root: {
+              "&:hover": {
+                transform: "scale(1.05)",
+              },
+            },
+          }}
         >
           {loading ? "喵喵搬运中..." : "查看更多猫咪品种"}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Center>
+    </Container>
   );
 }

@@ -1,19 +1,36 @@
-import styles from "./breedDetail.module.css";
 import { catApi } from "@/api/catApi";
-import Link from "next/link"; // 用 Link 代替 router.back() 实现无 JS 跳转
+import Link from "next/link";
+import {
+  Container,
+  Grid,
+  GridCol,
+  Image,
+  Text,
+  Badge,
+  Group,
+  Stack,
+  Button,
+  Paper,
+  Center,
+  Divider,
+  Box,
+} from "@mantine/core";
 
-// 1. 声明为 async 函数，直接在服务端运行
 export default async function BreedDetailPage({
   params,
 }: {
-  params: Promise<{ breedDetail: string }>; // Next.js 15 必须声明为 Promise
+  params: Promise<{ breedDetail: string }>;
 }) {
-  // 2. 解构参数前必须先 await params
   const { breedDetail: breed_id } = await params;
 
   try {
-    // 3. 直接在服务端并行或串行获取数据
     const breedData = await catApi.fetchBreedDetail(breed_id);
+    if (!breedData)
+      return (
+        <Center h={400}>
+          <Text>找不到该品种信息</Text>
+        </Center>
+      );
 
     let imageUrl = "";
     if (breedData.reference_image_id) {
@@ -23,51 +40,104 @@ export default async function BreedDetailPage({
       imageUrl = imageRes.url;
     }
 
-    if (!breedData) {
-      return <div className={styles.container}>找不到该品种信息</div>;
-    }
-
     return (
-      <div className={styles.container}>
-        <div className={styles.content}>
-          {/* 这里渲染时图片地址已经是现成的，不会有闪烁 */}
-          <img
-            src={imageUrl}
-            alt={breedData.name}
-            className={styles.mainImage}
-          />
+      <Container size="lg" py="xl">
+        <Paper shadow="md" radius="lg" p="xl" withBorder>
+          <Grid gutter={40}>
+            {/* 修正 1: GridCol 替代 Grid.Col */}
+            <GridCol span={{ base: 12, md: 5 }}>
+              <Image
+                src={imageUrl}
+                alt={breedData.name}
+                radius="md"
+                h={500}
+                fallbackSrc="https://placehold.co/600x400?text=暂无照片"
+              />
+            </GridCol>
 
-          <div className={styles.textSection}>
-            <h1>{breedData.name}</h1>
-            <p className={styles.origin}>原产地: {breedData.origin}</p>
-            <p className={styles.description}>{breedData.description}</p>
+            <GridCol span={{ base: 12, md: 7 }}>
+              <Stack gap="md">
+                {/* 修正 2: Title 不支持 gradient，改用 Text 模拟 h1 */}
+                <Text
+                  component="h1"
+                  size="3rem"
+                  fw={900}
+                  variant="gradient"
+                  gradient={{ from: "pink", to: "orange" }}
+                  style={{ lineHeight: 1.2, margin: 0 }}
+                >
+                  {breedData.name}
+                </Text>
 
-            <div className={styles.stats}>
-              <div className={styles.statItem}>
-                <span>性格:</span> {breedData.temperament}
-              </div>
-              <div className={styles.statItem}>
-                <span>平均寿命:</span> {breedData.life_span} 年
-              </div>
-              <div className={styles.statItem}>
-                <span>适应能力:</span> {breedData.adaptability} / 5
-              </div>
-            </div>
-          </div>
-        </div>
+                {/* 修正 3: 解决 image_f2e88e.jpg 的 Hydration Error */}
+                {/* <Text> 默认是 <p>，内部不能放 <Badge> (它是 <div>)。改用 Box 替代 */}
+                <Box>
+                  <Group gap="xs">
+                    <Text size="sm" c="dimmed">
+                      原产地:
+                    </Text>
+                    <Badge variant="outline" color="gray">
+                      {breedData.origin}
+                    </Badge>
+                  </Group>
+                </Box>
 
-        <div className={styles.buttonWrapper}>
-          {/* 4. 使用 Link 回到列表，保持纯 Server 渲染，无需加载 JS */}
-          <Link href="/breeds" className={styles.backBtn}>
-            返回列表
+                <Text size="md" style={{ lineHeight: 1.6 }}>
+                  {breedData.description}
+                </Text>
+
+                <Divider my="sm" label="详细特征" labelPosition="center" />
+
+                <Stack gap="xs">
+                  <Text size="sm">
+                    <b>性格:</b> {breedData.temperament}
+                  </Text>
+                  <Text size="sm">
+                    <b>平均寿命:</b> {breedData.life_span} 年
+                  </Text>
+
+                  <Text size="sm">
+                    <b>适应能力:</b> ({breedData.adaptability} / 5)
+                  </Text>
+                </Stack>
+              </Stack>
+            </GridCol>
+          </Grid>
+        </Paper>
+
+        <Center mt={40}>
+          {/* 修正 4: 解决 image_f2e909.png 错误 */}
+          {/* 在 Server Component 中，不能直接将 Link 组件传递给 component 属性 */}
+          {/* 改为直接使用 Link 包装 Button，或者直接使用 Link 加上样式 */}
+          <Link href="/breeds" style={{ textDecoration: "none" }}>
+            <Button
+              loaderProps={{ type: "dots" }}
+              color="pink.5"
+              size="lg"
+              radius="xl"
+              variant="filled"
+              style={{
+                transition: "all 0.2s ease",
+              }}
+              styles={{
+                root: {
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                  },
+                },
+              }}
+            >
+              返回品种列表
+            </Button>
           </Link>
-        </div>
-      </div>
+        </Center>
+      </Container>
     );
   } catch (error) {
-    console.error("加载失败:", error);
     return (
-      <div className={styles.container}>数据加载出错，请检查品种 ID。</div>
+      <Center h={400}>
+        <Text c="red">加载失败，请检查品种 ID</Text>
+      </Center>
     );
   }
 }

@@ -1,3 +1,12 @@
+import "@mantine/core/styles.css"; //只在最顶层导入一次
+import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
+  MantineProvider,
+  Container,
+  ColorSchemeScript,
+} from "@mantine/core";
 import NavBar from "@/components/NavBar/NavBar";
 import "./globals.css";
 
@@ -15,23 +24,47 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <ColorSchemeScript />
         <meta charSet="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>"
+        />
         <title>thecatproject</title>
       </head>
       <body>
-        <div className="app-container">
-          {/* 原先App.tsx的内容，不用自己写router，直接放进来 */}
-          <header className="site-header">
-            <NavBar />
-          </header>
-          {/* 这里的 children 会根据你访问的 URL 自动切换成 
+        <MantineProvider>
+          <AppShell
+            header={{ height: { base: 100, sm: 120 } }} // 这里的 60 是 header 的高度
+            padding="md" // 自动给 main 区域加内边距
+          >
+            {/* 原先App.tsx的内容，不用自己写router，直接放进来 */}
+            <AppShellHeader
+              style={{
+                // 找回毛玻璃质感
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                backdropFilter: "blur(10px)",
+                // 增加一个淡淡的投影
+                boxShadow: "0 4px 30px rgba(0, 0, 0, 0.05)",
+                borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <NavBar />
+            </AppShellHeader>
+            {/* 这里的 children 会根据你访问的 URL 自动切换成 
              Gallery.tsx 或 Breeds.tsx，不需要手动写 <Routes> */}
-          <main className="main-content">{children}</main>
-        </div>
+            <AppShellMain>
+              {/* Container 替代了原本 .main-content 里的 max-width: 1200px 和 margin: 0 auto */}
+              <Container size="lg">{children}</Container>
+            </AppShellMain>
+          </AppShell>
+        </MantineProvider>
       </body>
     </html>
   );

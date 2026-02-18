@@ -1,26 +1,21 @@
-/* src/App.css */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* 这种高级动画逻辑保留在全局，作为通用工具类 */
+.animated-underline {
+  position: relative;
+  text-decoration: none;
 }
 
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-
-  /* 1. 把这里的背景色删掉，或者改为透明 */
-  background-color: transparent;
-
-  /* 2. 阴影可以留着，但建议调淡一点，配合毛玻璃更高级 */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.animated-underline::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 50%; /* 从中间开始 */
+  transform: translateX(-50%);
+  background-color: #ff9a9e;
+  transition: width 0.3s ease;
 }
 
-.main-content {
-  flex: 1;
-  max-width: 1200px;
-  margin: 0 auto;
+.animated-underline:hover::after {
   width: 100%;
 }

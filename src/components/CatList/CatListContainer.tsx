@@ -1,13 +1,12 @@
-// src/components/CatList/CatListContainer.tsx
 "use client";
 
 import { useState } from "react";
 import { catApi, Cat } from "../../api/catApi";
-import CatCard from "../CatCard/CatCard"; // 这里的导入是为了“加载更多”
-import styles from "./CatListContainer.module.css";
+import CatCard from "../CatCard/CatCard";
+import { SimpleGrid, Button, Center, Box } from "@mantine/core";
 
 export default function CatListContainer({
-  children, // 👈 这是服务器给你的“首屏成品”，不需要 JS 逻辑也能显示
+  children,
   initialPage,
 }: {
   children: React.ReactNode;
@@ -15,36 +14,60 @@ export default function CatListContainer({
 }) {
   const [extraCats, setExtraCats] = useState<Cat[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(initialPage);
 
   const handleLoadMore = async () => {
     setLoading(true);
-    const nextPage = initialPage + 1;
+    const nextPage = page + 1;
     const data = await catApi.fetchCats(12, nextPage);
-    setExtraCats([...extraCats, ...data]);
+    setExtraCats((prev) => [...prev, ...data]);
+    setPage(nextPage);
     setLoading(false);
   };
 
   return (
-    <>
-      <div className={styles.grid}>
-        {/* 1. 这里的渲染不需要下载 CatCard 的 JS 逻辑，因为它是 Server 传来的成品 */}
+    <Box pb="xl">
+      {/* 1. 使用 SimpleGrid 替代 .grid */}
+      {/* cols 控制列数，spacing 控制间距 */}
+      <SimpleGrid
+        cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
+        spacing="lg"
+        verticalSpacing="xl"
+      >
+        {/* 服务器端初次渲染的内容 */}
         {children}
 
-        {/* 2. 这里的渲染需要 CatCard 的 JS 逻辑，因为它是 Client 端生成的 */}
+        {/* 客户端加载的更多内容 */}
         {extraCats.map((cat) => (
           <CatCard key={cat.id} cat={cat} />
         ))}
-      </div>
+      </SimpleGrid>
 
-      <div className={styles.buttonWrapper}>
-        <button
+      {/* 2. 使用 Center 和 Button 替代 .buttonWrapper 和 .loadMoreBtn */}
+      <Center mt={50} pb={40}>
+        <Button
           onClick={handleLoadMore}
-          disabled={loading}
-          className={styles.loadMoreBtn}
+          loading={loading}
+          loaderProps={{ type: "dots" }}
+          color="pink.5"
+          size="lg"
+          radius="xl"
+          variant="filled"
+          style={{
+            transition: "all 0.2s ease",
+          }}
+          // 给按钮也加上你喜欢的 hover 放大效果
+          styles={{
+            root: {
+              "&:hover": {
+                transform: "scale(1.05)",
+              },
+            },
+          }}
         >
           {loading ? "喵喵搬运中..." : "查看更多猫咪"}
-        </button>
-      </div>
-    </>
+        </Button>
+      </Center>
+    </Box>
   );
 }
