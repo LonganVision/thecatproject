@@ -1,62 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import styles from "./gallery.module.css";
-import { catApi, Cat } from "../../api/catApi";
+// src/app/gallery/page.tsx (Server Component)
+import { catApi } from "../../api/catApi";
 import CatCard from "../../components/CatCard/CatCard";
+import CatListContainer from "../../components/CatList/CatListContainer";
 
-const Gallery = () => {
-  //useState = 储存数据的存钱罐
-  //盒子里的猫
-  const [cats, setCats] = useState<Cat[]>([]);
-  //加载状态
-  const [loading, setLoading] = useState(true);
-  //页码
-  const [page, setPage] = useState(0);
-
-  const fetchCats = async (currentPage: number) => {
-    setLoading(true);
-    try {
-      const data = await catApi.fetchCats(12, currentPage);
-      setCats((prevCats: Cat[]) =>
-        currentPage === 0 ? data : [...prevCats, ...data],
-      );
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  //useEffect = 数据变动时的“自动触发器”
-  useEffect(() => {
-    fetchCats(0);
-  }, []);
-
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage); // 更新状态
-    fetchCats(nextPage); // 抓取下一页
-  };
+// src/app/gallery/page.tsx
+export default async function GalleryPage() {
+  const initialCats = await catApi.fetchCats(12, 0);
 
   return (
-    <>
-      <div className={styles.grid}>
-        {cats.map((cat) => (
+    <main>
+      {/* 使用随机数或者固定字符串作为 key，
+          强制 Next.js 在每次进入该页面时重新挂载 Client Component */}
+      <CatListContainer key={new Date().getTime()} initialPage={0}>
+        {initialCats.map((cat) => (
           <CatCard key={cat.id} cat={cat} />
         ))}
-      </div>
-      <div className={styles.buttonWrapper}>
-        <button
-          onClick={handleLoadMore}
-          disabled={loading}
-          className={styles.loadMoreBtn}
-        >
-          {loading ? "喵喵搬运中..." : "查看更多猫咪"}
-        </button>
-      </div>
-    </>
+      </CatListContainer>
+    </main>
   );
-};
-
-export default Gallery;
+}
