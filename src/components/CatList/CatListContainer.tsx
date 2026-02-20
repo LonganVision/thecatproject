@@ -1,9 +1,17 @@
+// src/components/CatList/CatListContainer.tsx
 "use client";
 
 import { useState } from "react";
 import { catApi, Cat } from "../../api/catApi";
 import CatCard from "../CatCard/CatCard";
-import { SimpleGrid, Button, Center, Box } from "@mantine/core";
+import {
+  SimpleGrid,
+  Button,
+  Center,
+  Container,
+  Skeleton,
+  Stack,
+} from "@mantine/core";
 
 export default function CatListContainer({
   children,
@@ -19,55 +27,95 @@ export default function CatListContainer({
   const handleLoadMore = async () => {
     setLoading(true);
     const nextPage = page + 1;
-    const data = await catApi.fetchCats(12, nextPage);
-    setExtraCats((prev) => [...prev, ...data]);
-    setPage(nextPage);
-    setLoading(false);
+    try {
+      const data = await catApi.fetchCats(12, nextPage);
+      setExtraCats((prev) => [...prev, ...data]);
+      setPage(nextPage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Box pb="xl">
-      {/* 1. 使用 SimpleGrid 替代 .grid */}
-      {/* cols 控制列数，spacing 控制间距 */}
+    <Container size="lg" p={0} style={{ border: "none" }}>
       <SimpleGrid
         cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
         spacing="lg"
         verticalSpacing="xl"
       >
-        {/* 服务器端初次渲染的内容 */}
         {children}
 
-        {/* 客户端加载的更多内容 */}
         {extraCats.map((cat) => (
           <CatCard key={cat.id} cat={cat} />
         ))}
+
+        {loading &&
+          Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <Stack
+                key={`skeleton-${index}`}
+                className="orange-skeleton-group"
+                gap="xs"
+              >
+                {/* 注意：这里不需要再给 Skeleton 传颜色，全靠 CSS */}
+                <Skeleton height={200} radius="md" />
+                <Skeleton height={20} width="70%" radius="xl" />
+                <Skeleton height={20} width="40%" radius="xl" />
+              </Stack>
+            ))}
       </SimpleGrid>
 
-      {/* 2. 使用 Center 和 Button 替代 .buttonWrapper 和 .loadMoreBtn */}
-      <Center mt={50} pb={40}>
+      <Center mt={60} pb={40}>
         <Button
           onClick={handleLoadMore}
           loading={loading}
           loaderProps={{ type: "dots" }}
-          color="pink.5"
+          className="load-more-button"
           size="lg"
           radius="xl"
-          variant="filled"
-          style={{
-            transition: "all 0.2s ease",
-          }}
-          // 给按钮也加上你喜欢的 hover 放大效果
-          styles={{
-            root: {
-              "&:hover": {
-                transform: "scale(1.05)",
-              },
-            },
-          }}
         >
-          {loading ? "喵喵搬运中..." : "查看更多猫咪"}
+          查看更多猫咪
         </Button>
       </Center>
-    </Box>
+
+      <style>{`
+        /* 1. 终极方案：直接覆盖 Mantine Skeleton 的类名样式 */
+        
+        /* 浅色模式 */
+        .orange-skeleton-group .mantine-Skeleton-root {
+          background-color: var(--mantine-color-orange-2) !important;
+          &::before {
+            background: var(--mantine-color-orange-1) !important;
+          }
+        }
+
+        /* 深色模式 */
+        [data-mantine-color-scheme="dark"] .orange-skeleton-group .mantine-Skeleton-root {
+          background-color: var(--mantine-color-orange-4) !important;
+          &::before {
+            background: var(--mantine-color-orange-3) !important;
+          }
+        }
+
+        /* 2. 按钮样式 (Orange 主题) */
+        .load-more-button {
+          transition: all 0.2s ease;
+          background-color: var(--mantine-color-orange-4);
+          color: white;
+          border: 0;
+        }
+
+        [data-mantine-color-scheme="dark"] .load-more-button {
+          background-color: var(--mantine-color-orange-2);
+          color: var(--mantine-color-orange-9);
+        }
+
+        .load-more-button:hover {
+          transform: translateY(-3px) scale(1.02);
+          filter: brightness(1.1);
+        }
+      `}</style>
+    </Container>
   );
 }

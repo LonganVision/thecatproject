@@ -1,9 +1,18 @@
+// src/components/BreedList/BreedListContainer.tsx
 "use client";
 
 import { useState } from "react";
 import { catApi } from "@/api/catApi";
 import BreedCard from "../BreedCard/BreedCard";
-import { SimpleGrid, Button, Center, Container } from "@mantine/core";
+import {
+  SimpleGrid,
+  Button,
+  Center,
+  Container,
+  Box,
+  Skeleton,
+  Stack,
+} from "@mantine/core";
 
 export default function BreedListContainer({
   children,
@@ -40,45 +49,87 @@ export default function BreedListContainer({
   };
 
   return (
-    // 1. 使用 Container 替代 .container
-    <Container size="lg" py="xl">
-      {/* 2. 使用 SimpleGrid 替代 .grid，完美适配 250px 左右的卡片宽度 */}
+    <Container size="lg" p={0} style={{ border: "none" }}>
       <SimpleGrid
         cols={{ base: 1, xs: 2, sm: 3, md: 4 }}
         spacing="lg"
         verticalSpacing="xl"
       >
+        {/* 1. 初始渲染内容 */}
         {children}
+
+        {/* 2. 更多品种内容 */}
         {extraBreeds.map((breed) => (
           <BreedCard key={breed.id} breed={breed} />
         ))}
+
+        {/* 3. 终极橘色 Skeleton (与 CatList 对齐) */}
+        {loading &&
+          Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <Stack
+                key={`breed-skeleton-${index}`}
+                className="orange-skeleton-group"
+                gap="xs"
+              >
+                {/* BreedCard 是带 Overlay 的背景图风格，高度 200 */}
+                <Skeleton height={200} radius="lg" />
+              </Stack>
+            ))}
       </SimpleGrid>
 
-      {/* 3. 使用 Center 和 Button 替代 .buttonWrapper 和 .loadMoreBtn */}
-      <Center mt={50}>
+      <Center mt={60} pb={40}>
         <Button
           onClick={handleLoadMore}
           loading={loading}
           loaderProps={{ type: "dots" }}
-          color="pink.5"
+          className="load-more-button"
           size="lg"
           radius="xl"
-          variant="filled"
-          style={{
-            transition: "all 0.2s ease",
-          }}
-          // 给按钮也加上你喜欢的 hover 放大效果
-          styles={{
-            root: {
-              "&:hover": {
-                transform: "scale(1.05)",
-              },
-            },
-          }}
         >
-          {loading ? "喵喵搬运中..." : "查看更多猫咪品种"}
+          查看更多猫咪品种
         </Button>
       </Center>
+
+      <style>{`
+        /* --- Skeleton 强制变橘逻辑 --- */
+        .orange-skeleton-group .mantine-Skeleton-root {
+          background-color: var(--mantine-color-orange-1) !important;
+          &::before {
+            background: var(--mantine-color-orange-0) !important;
+          }
+        }
+
+        [data-mantine-color-scheme="dark"] .orange-skeleton-group .mantine-Skeleton-root {
+          background-color: var(--mantine-color-orange-9) !important;
+          &::before {
+            background: var(--mantine-color-orange-8) !important;
+          }
+        }
+
+        /* --- Button 橘色系适配 (与 CatList 一致) --- */
+        .load-more-button {
+          transition: all 0.2s ease;
+          background-color: var(--mantine-color-orange-4);
+          color: white;
+          border: 0;
+        }
+
+        [data-mantine-color-scheme="dark"] .load-more-button {
+          background-color: var(--mantine-color-orange-2);
+          color: var(--mantine-color-orange-9);
+        }
+
+        .load-more-button:hover {
+          transform: translateY(-3px) scale(1.05);
+          filter: brightness(1.1);
+        }
+
+        .load-more-button:active {
+          transform: translateY(0) scale(0.95);
+        }
+      `}</style>
     </Container>
   );
 }

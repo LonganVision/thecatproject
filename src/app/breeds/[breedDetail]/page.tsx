@@ -1,3 +1,4 @@
+// src/app/breeds/[breedDetail]/page.tsx
 import { catApi } from "@/api/catApi";
 import Link from "next/link";
 import {
@@ -14,6 +15,7 @@ import {
   Center,
   Divider,
   Box,
+  Progress,
 } from "@mantine/core";
 
 export default async function BreedDetailPage({
@@ -28,7 +30,7 @@ export default async function BreedDetailPage({
     if (!breedData)
       return (
         <Center h={400}>
-          <Text>找不到该品种信息</Text>
+          <Text fw={700}>找不到该品种信息 😿</Text>
         </Center>
       );
 
@@ -41,102 +43,146 @@ export default async function BreedDetailPage({
     }
 
     return (
-      <Container size="lg" py="xl">
-        <Paper shadow="md" radius="lg" p="xl" withBorder>
-          <Grid gutter={40}>
-            {/* 修正 1: GridCol 替代 Grid.Col */}
+      <Container size="lg" p={0} pt={10} pb="xl">
+        <Paper
+          shadow="md"
+          radius="lg"
+          p="xl"
+          withBorder
+          className="detail-paper"
+        >
+          <Grid gutter={40} align="stretch">
+            {/* 左侧图片 */}
             <GridCol span={{ base: 12, md: 5 }}>
               <Image
                 src={imageUrl}
                 alt={breedData.name}
                 radius="md"
-                h={500}
+                h={{ base: 300, md: 550 }}
+                fit="cover"
                 fallbackSrc="https://placehold.co/600x400?text=暂无照片"
               />
             </GridCol>
 
+            {/* 右侧详情 */}
             <GridCol span={{ base: 12, md: 7 }}>
-              <Stack gap="md">
-                {/* 修正 2: Title 不支持 gradient，改用 Text 模拟 h1 */}
-                <Text
-                  component="h1"
-                  size="3rem"
-                  fw={900}
-                  variant="gradient"
-                  gradient={{ from: "pink", to: "orange" }}
-                  style={{ lineHeight: 1.2, margin: 0 }}
-                >
-                  {breedData.name}
-                </Text>
-
-                {/* 修正 3: 解决 image_f2e88e.jpg 的 Hydration Error */}
-                {/* <Text> 默认是 <p>，内部不能放 <Badge> (它是 <div>)。改用 Box 替代 */}
+              <Stack gap="lg">
                 <Box>
-                  <Group gap="xs">
-                    <Text size="sm" c="dimmed">
-                      原产地:
-                    </Text>
-                    <Badge variant="outline" color="gray">
-                      {breedData.origin}
+                  <Text
+                    component="h1"
+                    size="3.5rem"
+                    fw={900}
+                    variant="gradient"
+                    gradient={{ from: "orange.5", to: "pink.5" }}
+                    style={{
+                      lineHeight: 1.1,
+                      margin: 0,
+                      letterSpacing: "-1px",
+                    }}
+                  >
+                    {breedData.name}
+                  </Text>
+                  <Group gap="xs" mt="xs">
+                    <Badge variant="dot" color="orange" size="lg">
+                      原产地: {breedData.origin}
+                    </Badge>
+                    <Badge variant="outline" color="pink" size="lg">
+                      寿命: {breedData.life_span} 年
                     </Badge>
                   </Group>
                 </Box>
 
-                <Text size="md" style={{ lineHeight: 1.6 }}>
+                <Text size="lg" c="dimmed" style={{ lineHeight: 1.7 }}>
                   {breedData.description}
                 </Text>
 
-                <Divider my="sm" label="详细特征" labelPosition="center" />
+                <Divider label="性格特征" labelPosition="center" />
+
+                <Group gap="xs">
+                  {breedData.temperament?.split(",").map((t: string) => (
+                    <Badge
+                      key={t}
+                      variant="light"
+                      color="orange.2"
+                      radius="sm"
+                      c="orange.9"
+                    >
+                      {t.trim()}
+                    </Badge>
+                  ))}
+                </Group>
+
+                <Divider label="能力评分" labelPosition="center" />
 
                 <Stack gap="xs">
-                  <Text size="sm">
-                    <b>性格:</b> {breedData.temperament}
-                  </Text>
-                  <Text size="sm">
-                    <b>平均寿命:</b> {breedData.life_span} 年
-                  </Text>
-
-                  <Text size="sm">
-                    <b>适应能力:</b> ({breedData.adaptability} / 5)
-                  </Text>
+                  <Group justify="space-between">
+                    <Text size="sm" fw={700}>
+                      适应能力
+                    </Text>
+                    <Text size="sm" c="orange.6" fw={700}>
+                      {breedData.adaptability} / 5
+                    </Text>
+                  </Group>
+                  <Progress
+                    value={(breedData.adaptability / 5) * 100}
+                    color="orange.5"
+                    size="sm"
+                    radius="xl"
+                  />
                 </Stack>
               </Stack>
             </GridCol>
           </Grid>
         </Paper>
 
-        <Center mt={40}>
-          {/* 修正 4: 解决 image_f2e909.png 错误 */}
-          {/* 在 Server Component 中，不能直接将 Link 组件传递给 component 属性 */}
-          {/* 改为直接使用 Link 包装 Button，或者直接使用 Link 加上样式 */}
+        <Center mt={50}>
           <Link href="/breeds" style={{ textDecoration: "none" }}>
-            <Button
-              loaderProps={{ type: "dots" }}
-              color="pink.5"
-              size="lg"
-              radius="xl"
-              variant="filled"
-              style={{
-                transition: "all 0.2s ease",
-              }}
-              styles={{
-                root: {
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
-                },
-              }}
-            >
+            <Button className="back-button" size="lg" radius="xl">
               返回品种列表
             </Button>
           </Link>
         </Center>
+
+        <style>{`
+          /* 1. Paper 内容卡片变色 */
+          .detail-paper {
+            background-color: white;
+            transition: background-color 0.3s ease;
+          }
+
+          [data-mantine-color-scheme="dark"] .detail-paper {
+            background-color: var(--mantine-color-dark-7);
+          }
+
+          /* 2. Button 延续之前的橘色方案 */
+          .back-button {
+            transition: all 0.2s ease;
+            background-color: var(--mantine-color-orange-4);
+            color: white;
+            border: 0;
+            padding: 0 40px;
+          }
+
+          [data-mantine-color-scheme="dark"] .back-button {
+            background-color: var(--mantine-color-orange-2);
+            color: var(--mantine-color-orange-9);
+          }
+
+          .back-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            filter: brightness(1.1);
+          }
+
+          .back-button:active {
+            transform: translateY(0) scale(0.98);
+          }
+        `}</style>
       </Container>
     );
   } catch (error) {
     return (
       <Center h={400}>
-        <Text c="red">加载失败，请检查品种 ID</Text>
+        <Text c="red">加载失败</Text>
       </Center>
     );
   }

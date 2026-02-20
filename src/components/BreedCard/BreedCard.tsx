@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Card, Text, Overlay, Center } from "@mantine/core";
+import { Card, Text, Overlay, Center, BackgroundImage } from "@mantine/core";
 import { BreedWithImage } from "../../api/catApi";
 
 interface BreedCardProps {
@@ -15,55 +15,66 @@ const BreedCard: React.FC<BreedCardProps> = ({ breed }) => {
       href={`/breeds/${breed.id}`}
       p={0}
       radius="lg"
+      shadow="md"
+      withBorder
+      className="breed-card-root"
       style={{
         height: 200,
-        backgroundImage: `url(${breed.image_url})`,
-        backgroundPosition: "center",
-        backgroundSize: "cover",
         cursor: "pointer",
         overflow: "hidden",
-        border: "none",
-        // 定义一个局部的 CSS 变量控制透明度
-        "--overlay-opacity": "1",
-        "--title-scale": "1",
-        transition: "all 0.3s ease",
-      }}
-      // 通过事件改变变量值，避开选择器报错
-      onMouseEnter={(e) => {
-        e.currentTarget.style.setProperty("--overlay-opacity", "0");
-        e.currentTarget.style.setProperty("--title-scale", "1.1");
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.setProperty("--overlay-opacity", "1");
-        e.currentTarget.style.setProperty("--title-scale", "1");
+        transition: "transform 0.3s ease",
       }}
     >
-      <Overlay
-        color="#000"
-        backgroundOpacity={0.45}
-        blur={4}
-        zIndex={1}
-        // 使用我们定义的变量
-        style={{
-          opacity: "var(--overlay-opacity)",
-          transition: "opacity 0.4s ease",
-        }}
+      <BackgroundImage
+        src={breed.image_url || "https://placekitten.com/400/300"}
+        h="100%"
       >
-        <Center h="100%">
+        <Overlay
+          blur={5}
+          zIndex={1}
+          className="card-overlay"
+          style={{ transition: "opacity 0.4s ease" }}
+        />
+        <Center h="100%" p="md">
+          {" "}
+          {/* 添加 padding，防止文字贴边 */}
           <Text
-            c="white"
-            fw={800}
+            c="light-dark(var(--mantine-color-orange-2), var(--mantine-color-orange-5))"
+            fw={900}
+            // --- 核心修改：处理换行与居中 ---
+            ta="center" // 文本内部水平居中
             style={{
-              textShadow: "1px 1px 4px rgba(0, 0, 0, 0.8)",
-              fontSize: "1.5rem",
-              transform: "scale(var(--title-scale))",
-              transition: "transform 0.3s ease",
+              fontSize: "1.7rem",
+              zIndex: 2,
+              textShadow: "0px 2px 4px rgba(0, 0, 0, 0.3)",
+              wordBreak: "break-word", // 强制长单词换行
+              lineHeight: 1.2, // 调整行高，换行后更美观
+              maxWidth: "100%", // 限制最大宽度
             }}
           >
             {breed.name ?? "神秘品种"}
           </Text>
         </Center>
-      </Overlay>
+      </BackgroundImage>
+
+      <style>{`
+        .breed-card-root .card-overlay {
+          opacity: 1 !important;
+          background-color: rgba(0, 0, 0, 0.45) !important;
+        }
+
+        [data-mantine-color-scheme="dark"] .breed-card-root .card-overlay {
+          background-color: rgba(255, 255, 255, 0.29) !important;
+        }
+
+        .breed-card-root:hover {
+          transform: scale(1.05);
+        }
+
+        .breed-card-root:hover .card-overlay {
+          opacity: 0 !important;
+        }
+      `}</style>
     </Card>
   );
 };
