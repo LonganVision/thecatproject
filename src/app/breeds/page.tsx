@@ -2,12 +2,13 @@
 import { catApi } from "../../api/catApi";
 import BreedCard from "../../components/BreedCard/BreedCard";
 import BreedListContainer from "../../components/BreedList/BreedListContainer";
+import { Container, Title, Text, Stack } from "@mantine/core";
 
 export default async function BreedsPage() {
-  // 在服务端运行这一套重型请求
-  // 这对应图中的 Database Query
+  // 在服务端获取初始品种数据
   const data = await catApi.fetchBreeds(12, 0);
 
+  // 并行获取图片，补全数据
   const initialBreeds = await Promise.all(
     data.map(async (breed: any) => {
       if (breed.reference_image_id) {
@@ -25,13 +26,22 @@ export default async function BreedsPage() {
   );
 
   return (
-    <div>
-      <BreedListContainer key="breeds-list" initialPage={0}>
-        {/* 🔥 这里的 BreedCard 接收的是已经 enriched（带图）的数据 */}
-        {initialBreeds.map((breed) => (
-          <BreedCard key={breed.id} breed={breed} />
-        ))}
-      </BreedListContainer>
-    </div>
+    <main>
+      {/* 彻底去掉 padding，保持全站宽度对齐 */}
+      <Container size="lg" p={0}>
+        <Stack gap={0} mb={20} align="center">
+          <Text c="dimmed" fw={500}>
+            猫猫品种大全
+          </Text>
+        </Stack>
+
+        {/* 列表容器，key 设为固定值 */}
+        <BreedListContainer key="breeds-list-root" initialPage={0}>
+          {initialBreeds.map((breed) => (
+            <BreedCard key={breed.id} breed={breed} />
+          ))}
+        </BreedListContainer>
+      </Container>
+    </main>
   );
 }

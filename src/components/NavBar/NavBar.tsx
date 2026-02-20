@@ -1,65 +1,101 @@
 // src/components/NavBar/NavBar.tsx
 "use client";
-import Link from "next/link"; // 重点，Link从 next/link 导入
-import { Stack, Group, Text, Anchor, Container, Center } from "@mantine/core";
-
+import Link from "next/link";
+import {
+  Stack,
+  Group,
+  Text,
+  Anchor,
+  Container,
+  Box,
+  ActionIcon,
+  useMantineColorScheme,
+  useComputedColorScheme,
+} from "@mantine/core";
+import { IconSun, IconMoon } from "@tabler/icons-react";
 const NavBar = () => {
+  const { setColorScheme } = useMantineColorScheme();
+
+  // getInitialValueInEffect: true 确保在水合完成后获取正确值，防止 SSR 闪烁
+  const computedColorScheme = useComputedColorScheme("light", {
+    getInitialValueInEffect: true,
+  });
   return (
     <Container size="lg" h="100%">
-      <Stack align="center" gap={6}>
-        <Text
-          variant="gradient"
-          gradient={{ from: "pink", to: "orange", deg: 45 }}
-          style={{
-            // 基础样式
-            fontSize: "2.8rem",
-            fontWeight: 800,
-            letterSpacing: "1px",
-            cursor: "pointer",
-            display: "inline-block",
-            transition: "transform 0.3s ease",
-
-            // 使用 CSS 变量来定义缩放比例，默认为 1
-            transform: "scale(var(--nav-logo-scale, 1))",
-          }}
-          // 鼠标移入/移出时动态修改变量值
-          onMouseEnter={(e) =>
-            e.currentTarget.style.setProperty("--nav-logo-scale", "1.05")
-          }
-          onMouseLeave={(e) =>
-            e.currentTarget.style.setProperty("--nav-logo-scale", "1")
-          }
-        >
-          猫猫网站
-        </Text>
-        <Group gap="xl">
-          <Anchor
+      <Group justify="center" align="center" h="100%" wrap="nowrap">
+        <Stack align="center" gap={6} justify="center" h="100%">
+          {/*Title*/}
+          <Text
             component={Link}
-            href="/gallery"
-            underline="never" // 关闭 Mantine 默认下划线
-            className="animated-underline" // 使用你保留的动画类
-            c="dark.3"
-            fw={600}
+            href="/"
+            c="light-dark(var(--mantine-color-orange-6), var(--mantine-color-orange-4))"
+            fw={800} // 对应 fontWeight
+            fz="2.8rem" // 对应 fontSize
+            lts="1px"
+            styles={{
+              root: {
+                textDecoration: "none",
+                display: "inline-block",
+                transition: "transform 0.3s ease",
+              },
+            }}
+            className="logo-hover-effect"
           >
-            相册
-          </Anchor>
-
-          <Text c="gray.3" fw={100}>
-            |
+            猫猫网站
           </Text>
+          {/*Navigation*/}
+          <Group gap="xl">
+            <Anchor
+              component={Link}
+              href="/gallery"
+              underline="never"
+              className="animated-underline"
+              c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4))"
+              fw={600}
+            >
+              相册
+            </Anchor>
 
-          <Anchor
-            component={Link}
-            href="/breeds"
-            underline="never" // 关闭 Mantine 默认下划线
-            className="animated-underline" // 使用你保留的动画类
-            c="dark.3"
-            fw={600}
-          >
-            品种
-          </Anchor>
-        </Group>
-      </Stack>
+            <Text c="gray.3" fw={100} visibleFrom="xs">
+              |
+            </Text>
+
+            <Anchor
+              component={Link}
+              href="/breeds"
+              underline="never"
+              className="animated-underline"
+              c="light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4))"
+              fw={600}
+            >
+              品种
+            </Anchor>
+            <Text c="gray.3" fw={100} visibleFrom="xs">
+              |
+            </Text>
+            <ActionIcon
+              onClick={() =>
+                setColorScheme(
+                  computedColorScheme === "light" ? "dark" : "light",
+                )
+              }
+              variant="default"
+              size="sm"
+              className="animated-underline"
+            >
+              {computedColorScheme === "light" ? (
+                <IconMoon size={16} stroke={1.5} />
+              ) : (
+                <IconSun size={16} stroke={1.5} />
+              )}
+            </ActionIcon>
+          </Group>
+        </Stack>
+      </Group>
+      <style>{`
+        .logo-hover-effect:hover { transform: scale(1.05); }
+        .animated-underline:hover { color: var(--mantine-color-orange-6) !important; }
+      `}</style>
     </Container>
   );
 };
