@@ -1,0 +1,28 @@
+/* 橘色加载按钮 */
+.orangeLoadMore {
+  background-color: var(--mantine-color-orange-4) !important;
+  color: white;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.orangeLoadMore:hover {
+  transform: translateY(-3px);
+  background-color: var(--mantine-color-orange-5) !important;
+}
+
+/* 骨架屏颜色穿透控制 */
+.orangeSkeletonGroup :global(.mantine-Skeleton-root) {
+  background-color: var(--mantine-color-orange-1) !important;
+}
+
+.orangeSkeletonGroup :global(.mantine-Skeleton-root)::before {
+  background: var(--mantine-color-orange-0) !important;
+}
+
+/* 深色模式 */
+[data-mantine-color-scheme="dark"]
+  .orangeSkeletonGroup
+  :global(.mantine-Skeleton-root) {
+  background-color: var(--mantine-color-orange-9) !important;
+}

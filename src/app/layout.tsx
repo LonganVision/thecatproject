@@ -1,31 +1,14 @@
-import "@mantine/core/styles.css"; //只在最顶层导入一次
+import "@mantine/core/styles.css";
+import "./globals.css";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
-  MantineProvider,
-  createTheme,
   Container,
   ColorSchemeScript,
 } from "@mantine/core";
 import NavBar from "@/components/NavBar/NavBar";
-import "./globals.css";
-
-{
-  /* 在 layout.tsx 中，children 是一个特殊的 prop。
-含义：它代表了“被当前布局包裹的内容” 。
-自动化原理：当你访问 /gallery 时，
-  Next.js 会自动把 app/gallery/page.tsx 里的组件当作 children 传给 RootLayout 。
-类型定义：{ children: React.ReactNode } 是 TypeScript 的标准写法，
-  用来告诉代码：children 可以是任何 React 能渲染的东西（组件、文字、甚至是一堆猫咪图片）*/
-}
-
-const theme = createTheme({
-  /** 这里放你为 catproject 定制的样式 **/
-  primaryColor: "orange",
-  defaultRadius: "xl",
-  cursorType: "pointer",
-});
+import { Providers } from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -45,36 +28,17 @@ export default function RootLayout({
         <title>thecatproject</title>
       </head>
       <body>
-        <MantineProvider theme={theme} defaultColorScheme="auto">
-          <AppShell padding="md" header={{ height: 120 }}>
-            {/* 原先App.tsx的内容，不用自己写router，直接放进来 */}
-            <AppShellHeader
-              style={{
-                backgroundColor: "var(--mantine-color-body)",
-                opacity: 0.8,
-                backdropFilter: "blur(10px)",
-                display: "flex",
-                alignItems: "center",
-                borderBottom: "1px solid var(--mantine-color-default-border)",
-              }}
-            >
+        <Providers>
+          <AppShell header={{ height: 120 }}>
+            <AppShellHeader>
               <NavBar />
             </AppShellHeader>
-            {/* 这里的 children 会根据你访问的 URL 自动切换成 
-             Gallery.tsx 或 Breeds.tsx，不需要手动写 <Routes> */}
-            <AppShellMain
-              style={{
-                minHeight: "100vh",
-                paddingBottom: "var(--mantine-spacing-xl)",
-                backgroundColor:
-                  "light-dark(var(--mantine-color-orange-0), var(--mantine-color-dark-6))",
-              }}
-            >
-              {/* Container 替代了原本 .main-content 里的 max-width: 1200px 和 margin: 0 auto */}
-              <Container size="lg">{children}</Container>
+
+            <AppShellMain>
+              <Container>{children}</Container>
             </AppShellMain>
           </AppShell>
-        </MantineProvider>
+        </Providers>
       </body>
     </html>
   );

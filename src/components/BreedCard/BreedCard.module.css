@@ -1,0 +1,35 @@
+.breedCardRoot {
+  height: 200px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.breedCardRoot:hover {
+  transform: scale(1.05);
+}
+
+/* 遮罩层控制 */
+.cardOverlay {
+  transition: opacity 0.4s ease;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+/* 深色模式下的遮罩 */
+:global([data-mantine-color-scheme="dark"]) .cardOverlay {
+  background-color: rgba(255, 255, 255, 0.29);
+}
+
+/* Hover 时遮罩透明 */
+.breedCardRoot:hover .cardOverlay {
+  opacity: 0;
+}
+
+.breedNameText {
+  font-size: 1.7rem;
+  z-index: 2;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  word-break: break-word;
+  line-height: 1.2;
+}

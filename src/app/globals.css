@@ -1,21 +1,69 @@
-/* 这种高级动画逻辑保留在全局，作为通用工具类 */
-.animated-underline {
-  position: relative;
-  text-decoration: none;
+/* 1. 修复背景色：直接作用于 AppShell 的 Main 容器 */
+.mantine-AppShell-main {
+  background-color: var(--body-bg) !important;
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
 }
 
-.animated-underline::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -4px;
-  left: 50%; /* 从中间开始 */
-  transform: translateX(-50%);
-  background-color: #ff9a9e;
-  transition: width 0.3s ease;
+/* 2. 修复 Header 样式：确保背景、边框及溢出可见 */
+.mantine-AppShell-header {
+  background-color: var(--nav-bg) !important;
+  border-bottom: 1px solid var(--nav-border) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  overflow: visible !important; /* 关键：防止裁掉超出容器的下划线 */
 }
 
-.animated-underline:hover::after {
-  width: 100%;
+/* 3. 导航链接动画：增加 Mantine 类名以提升权重 */
+.nav-link-animated.mantine-Anchor-root {
+  position: relative !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  color: var(--nav-link) !important;
+  transition: color 0.3s ease !important;
+}
+
+/* 伪元素下划线 */
+.nav-link-animated.mantine-Anchor-root::after {
+  content: "" !important;
+  position: absolute !important;
+  width: 0% !important;
+  height: 2px !important;
+  bottom: -4px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background-color: var(--line-color) !important;
+  transition: width 0.3s ease !important;
+}
+
+/* 悬停态 */
+.nav-link-animated.mantine-Anchor-root:hover {
+  color: var(--logo-color) !important;
+}
+
+.nav-link-animated.mantine-Anchor-root:hover::after {
+  width: 100% !important;
+}
+
+/* 4. Logo 动画 */
+.logo-hover {
+  display: inline-block !important;
+  text-decoration: none !important;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease !important;
+
+  /* 找回缺失的属性 */
+  font-size: 2.8rem !important; /* 大小 */
+  font-weight: 800 !important; /* 粗细 */
+  color: var(--logo-color) !important; /* 颜色：对应 theme.ts 里的变量 */
+  letter-spacing: 1px !important;
+}
+
+.logo-hover:hover {
+  transform: scale(1.05) !important;
+  /* 悬停时可以微调颜色或保持原样 */
+  color: var(--logo-color) !important;
 }
