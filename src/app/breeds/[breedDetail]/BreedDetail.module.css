@@ -1,0 +1,32 @@
+/* src/app/breeds/[breedDetail]/BreedDetail.module.css */
+
+.detailPaper {
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+:global([data-mantine-color-scheme="dark"]) .detailPaper {
+  background-color: var(--mantine-color-dark-8);
+}
+
+.backButton {
+  transition: all 0.2s ease;
+  background-color: var(--mantine-color-orange-4);
+  color: white;
+  border: 0;
+  padding: 0 40px;
+}
+
+:global([data-mantine-color-scheme="dark"]) .backButton {
+  background-color: var(--mantine-color-orange-2);
+  color: var(--mantine-color-orange-9);
+}
+
+.backButton:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: brightness(1.1);
+}
+
+.backButton:active {
+  transform: translateY(0) scale(0.98);
+}

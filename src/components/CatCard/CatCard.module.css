@@ -1,0 +1,24 @@
+.catCardRoot {
+  transition: all 0.3s ease;
+  cursor: default;
+  background-color: white; /* 浅色模式默认背景 */
+}
+
+/* 深色模式下的背景色 */
+:global([data-mantine-color-scheme="dark"]) .catCardRoot {
+  background-color: var(--mantine-color-orange-1);
+}
+
+/* 悬停效果 (位移 + 阴影 + 边框 + 背景色切换) */
+.catCardRoot:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--mantine-shadow-md);
+  border-color: var(--mantine-color-orange-4);
+  background-color: var(--mantine-color-orange-0);
+}
+
+/* 深色模式下的悬停效果 */
+:global([data-mantine-color-scheme="dark"]) .catCardRoot:hover {
+  background-color: var(--mantine-color-orange-3);
+  border-color: var(--mantine-color-orange-4);
+}

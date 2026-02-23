@@ -1,4 +1,3 @@
-// src/app/breeds/[breedDetail]/page.tsx
 import { catApi } from "@/api/catApi";
 import Link from "next/link";
 import {
@@ -17,6 +16,7 @@ import {
   Box,
   Progress,
 } from "@mantine/core";
+import styles from "./BreedDetail.module.css";
 
 export default async function BreedDetailPage({
   params,
@@ -49,7 +49,7 @@ export default async function BreedDetailPage({
           radius="lg"
           p="xl"
           withBorder
-          className="detail-paper"
+          className={styles.detailPaper}
         >
           <Grid gutter={40} align="stretch">
             {/* 左侧图片 */}
@@ -137,46 +137,11 @@ export default async function BreedDetailPage({
 
         <Center mt={50}>
           <Link href="/breeds" style={{ textDecoration: "none" }}>
-            <Button className="back-button" size="lg" radius="xl">
+            <Button className={styles.backButton} size="lg" radius="xl">
               返回品种列表
             </Button>
           </Link>
         </Center>
-
-        <style>{`
-          /* 1. Paper 内容卡片变色 */
-          .detail-paper {
-            background-color: white;
-            transition: background-color 0.3s ease;
-          }
-
-          [data-mantine-color-scheme="dark"] .detail-paper {
-            background-color: var(--mantine-color-dark-7);
-          }
-
-          /* 2. Button 延续之前的橘色方案 */
-          .back-button {
-            transition: all 0.2s ease;
-            background-color: var(--mantine-color-orange-4);
-            color: white;
-            border: 0;
-            padding: 0 40px;
-          }
-
-          [data-mantine-color-scheme="dark"] .back-button {
-            background-color: var(--mantine-color-orange-2);
-            color: var(--mantine-color-orange-9);
-          }
-
-          .back-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            filter: brightness(1.1);
-          }
-
-          .back-button:active {
-            transform: translateY(0) scale(0.98);
-          }
-        `}</style>
       </Container>
     );
   } catch (error) {
