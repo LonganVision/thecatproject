@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { Stack, Group, Text, Anchor, Container } from "@mantine/core";
-import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const NAV_LINKS = [
   { link: "/gallery", label: "相册" },

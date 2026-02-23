@@ -1,31 +1,25 @@
 "use client";
-import {
-  ActionIcon,
-  useMantineColorScheme,
-  useComputedColorScheme,
-} from "@mantine/core";
+import { ActionIcon, useMantineColorScheme } from "@mantine/core";
 import { IconSun, IconMoon } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
-export function ThemeToggle() {
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme("light", {
-    getInitialValueInEffect: true,
-  });
+export default function ThemeToggle() {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const [mounted, setMounted] = useState(false);
+
+  // 挂载后才显示图标，解决 Hydration failed 报错
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return <ActionIcon variant="default" size="md" radius="md" />;
 
   return (
     <ActionIcon
-      onClick={() =>
-        setColorScheme(computedColorScheme === "light" ? "dark" : "light")
-      }
+      onClick={() => toggleColorScheme()}
       variant="default"
-      size="sm"
-      aria-label="Toggle color scheme"
+      size="md"
+      radius="lg"
     >
-      {computedColorScheme === "light" ? (
-        <IconMoon size={16} stroke={1.5} />
-      ) : (
-        <IconSun size={16} stroke={1.5} />
-      )}
+      {colorScheme === "dark" ? <IconSun size={20} /> : <IconMoon size={20} />}
     </ActionIcon>
   );
 }
